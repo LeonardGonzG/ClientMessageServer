@@ -95,15 +95,29 @@ public class Host extends javax.swing.JFrame {
         if (!this.hostnameLogin.isEmpty() && !this.port.getText().trim().isEmpty()) {
 
             this.portLogin = Integer.parseInt(this.port.getText().trim());
-            
-            
-            this.user.setTitle("MESSENGER CLIENT - " + this.hostnameLogin.toUpperCase());
+
+            this.user.setTitle("MESSENGER CLIENT - Connected");
             this.user.conectionServer(this.hostnameLogin,this.portLogin );
             
-            this.setVisible(false);
-            this.user.setVisible(true);
+            
+             String beginMessegen=this.user.respServer;
+            
+            if (beginMessegen.startsWith("1000")) { // Registrado
+                this.user.loadComponents();
+                this.setVisible(false);
+                this.user.setVisible(true);
+                this.user.users.clearSelection();
+              
+            }else if(beginMessegen.startsWith("1002")){ //nombre ya se encuentra registrado
 
-            this.user.users.clearSelection();
+                this.showMessageError("USENAME ALREADY EXIST", "Please, enter other name");
+            }else if(beginMessegen.startsWith("1001")){ //nombre ya se encuentra registrado
+
+                this.showMessageError("INVALID NAME", "Please, enter other name");
+            }else{
+            
+                this.showMessageError("FAIL CONECTION", "Not is posible the conection with port: "+this.portLogin);
+            }
 
         } else {
             this.showMessageError("Input parameters", "Please, enter hostname and port");

@@ -19,7 +19,7 @@ public class MainServerController implements Runnable {
     private JList<String> userNames;
     private JLabel numUsers;
 
-    private String resp = "";
+    public String resp = "";
     private String nameUser = "";
 
     public MainServerController(String name, int port) {
@@ -52,7 +52,7 @@ public class MainServerController implements Runnable {
         while (true) {
             resp = this.controllerServer.readText();
 
-            System.out.println("" + resp); // Leer secuencialmente en la 
+          //  System.out.println("" + resp); // Leer secuencialmente en la 
 
             if (resp.startsWith("4010")) { // Mensaje  privados a recibir
 
@@ -97,7 +97,9 @@ public class MainServerController implements Runnable {
         return controllerServer.writeReadText(command);
     }
 
-    public void updateUsers(String command) {
+    public void write(String command) {
         this.controllerServer.writeText(command);
     }
+    
+   
 }

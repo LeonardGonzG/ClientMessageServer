@@ -1,6 +1,9 @@
 package GUI;
 
 import Entities.MainServerController;
+import java.util.logging.Level;
+
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -10,33 +13,39 @@ public class ClientMessenger extends javax.swing.JFrame {
 
     MainServerController mainServer;
     Thread messenger;
-    String respServer="";
+    String respServer = "";
+
+    String nameUserClient = "";
 
     public ClientMessenger() {
         initComponents();
         this.setLocationRelativeTo(null);
 
     }
-    
-    public void conectionServer( String nameClient, int port) {
+
+    public void conectionServer(String nameClient, int port) {
         this.mainServer = new MainServerController("127.0.0.1", port);
 
-     
-        messenger = this.mainServer.loadDataServer(
+        this.respServer = this.mainServer.writeReadText("REGISTER " + nameClient);
+
+        this.nameUserClient = nameClient;
+    }
+
+    public void loadComponents() {
+
+        this.messenger = this.mainServer.loadDataServer(
                 this.privateMessages,
                 this.publicMessages,
                 this.users,
                 this.numberUser,
-                nameClient);
+                this.nameUserClient);
 
-      respServer = this.mainServer.writeReadText("REGISTER "+nameClient);
-      this.mainServer.updateUsers("GETUSERNAMES");
-      
-        System.out.println(""+respServer);
-      
+        this.mainServer.write("GETUSERNAMES");
+
+        this.myName.setText(this.nameUserClient);
+      //  System.out.println("" + respServer);
+
     }
-    
-    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -64,6 +73,8 @@ public class ClientMessenger extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        myName = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("MESSENGER CLIENT - LEONARDO G");
@@ -167,6 +178,13 @@ public class ClientMessenger extends javax.swing.JFrame {
         jLabel3.setText("Messenger Client");
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 10, 570, -1));
 
+        jLabel8.setText("Welcome!");
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
+
+        myName.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        myName.setText("***");
+        jPanel1.add(myName, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 20, -1, -1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -182,23 +200,62 @@ public class ClientMessenger extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       
-        
+
         String message = this.messageSend.getText().trim();
-         String pos = this.users.getSelectedValue();
-         respServer = this.mainServer.writeReadText("SEND "+pos+" "+message);
-         
-         System.out.println(""+respServer);
-        
+        String pos = this.users.getSelectedValue();
+
+        if (pos != null && !message.isEmpty()) {
+            System.out.println("-> Enviando mensaje");
+
+            this.mainServer.write("SEND " + pos + " " + message);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                System.out.println("Error en al espera de tiempo");
+            }
+            if (mainServer.resp.startsWith("4000")) {
+                this.showMessageOk("Message sent successfully to " + pos);
+            }
+        } else if (pos == null) {
+
+            this.showMessageError("SELECT USER", "Please select a user");
+        } else if (message.isEmpty()) {
+            this.showMessageError("MESSAGE EMPTY", "Please type a message");
+        }
+
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         String message = this.messageSend.getText().trim();
-        
-        respServer = this.mainServer.writeReadText("SENDALL "+message);
-         System.out.println(""+respServer);
-        
+
+        if (!message.isEmpty()) {
+            this.mainServer.write("SENDALL " + message);
+
+            if (mainServer.resp.startsWith("2000")) {
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    System.out.println("Error en al espera de tiempo");
+                }
+                this.showMessageOk("Message sent successfully to all");
+            }
+        } else {
+            this.showMessageError("MESSAGE EMPTY", "Please type a message");
+        }
+
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    //Mensaje de exito en pantalla al usuario
+    private void showMessageOk(String message) {
+        JOptionPane.showMessageDialog(null, message);
+    }
+
+    //Mensaje de error en pantalla al usuario
+    private void showMessageError(String title, String message) {
+        JOptionPane.showConfirmDialog(null, message, title, JOptionPane.CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+    }
 
     /**
      * @param args the command line arguments
@@ -245,6 +302,7 @@ public class ClientMessenger extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -254,6 +312,7 @@ public class ClientMessenger extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JEditorPane messageSend;
+    private javax.swing.JLabel myName;
     public javax.swing.JLabel numberUser;
     public javax.swing.JTextPane privateMessages;
     public javax.swing.JTextPane publicMessages;
