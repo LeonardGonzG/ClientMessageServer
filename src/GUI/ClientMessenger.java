@@ -1,18 +1,42 @@
 package GUI;
 
+import Entities.MainServerController;
+
 /**
  *
  * @author Leonardo González G.
  */
 public class ClientMessenger extends javax.swing.JFrame {
 
-    /**
-     * Creates new form ClientMessenger
-     */
+    MainServerController mainServer;
+    Thread messenger;
+    String respServer="";
+
     public ClientMessenger() {
         initComponents();
-         this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(null);
+
     }
+    
+    public void conectionServer( String nameClient, int port) {
+        this.mainServer = new MainServerController("127.0.0.1", port);
+
+     
+        messenger = this.mainServer.loadDataServer(
+                this.privateMessages,
+                this.publicMessages,
+                this.users,
+                this.numberUser,
+                nameClient);
+
+      respServer = this.mainServer.writeReadText("REGISTER "+nameClient);
+      this.mainServer.updateUsers("GETUSERNAMES");
+      
+        System.out.println(""+respServer);
+      
+    }
+    
+    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -21,11 +45,11 @@ public class ClientMessenger extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextPane2 = new javax.swing.JTextPane();
+        privateMessages = new javax.swing.JTextPane();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        users = new javax.swing.JList<>();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jEditorPane1 = new javax.swing.JEditorPane();
+        messageSend = new javax.swing.JEditorPane();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -33,15 +57,17 @@ public class ClientMessenger extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel7 = new javax.swing.JLabel();
+        numberUser = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
+        publicMessages = new javax.swing.JTextPane();
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("MESSENGER CLIENT - LEONARDO G");
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -49,24 +75,24 @@ public class ClientMessenger extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(255, 255, 204));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTextPane2.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jScrollPane2.setViewportView(jTextPane2);
+        privateMessages.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jScrollPane2.setViewportView(privateMessages);
 
         jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 310, 370));
 
-        jList1.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+        users.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        users.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "User 1", "User 2", "User 3", "User 4", "User 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jList1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jScrollPane4.setViewportView(jList1);
+        users.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jScrollPane4.setViewportView(users);
 
         jPanel2.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 50, 200, 370));
 
-        jEditorPane1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jScrollPane1.setViewportView(jEditorPane1);
+        messageSend.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jScrollPane1.setViewportView(messageSend);
 
         jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 450, 310, 80));
 
@@ -74,6 +100,11 @@ public class ClientMessenger extends javax.swing.JFrame {
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/Img/email.png"))); // NOI18N
         jButton1.setText("Send");
         jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 450, -1, 80));
 
         jButton2.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
@@ -82,6 +113,11 @@ public class ClientMessenger extends javax.swing.JFrame {
         jButton2.setText("Send All");
         jButton2.setToolTipText("");
         jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 450, 90, 80));
 
         jLabel1.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
@@ -101,13 +137,17 @@ public class ClientMessenger extends javax.swing.JFrame {
         jLabel7.setText("Message");
         jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 430, -1, -1));
 
+        numberUser.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        numberUser.setText("0");
+        jPanel2.add(numberUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 30, 10, -1));
+
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 580, 550));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 204));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTextPane1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jScrollPane3.setViewportView(jTextPane1);
+        publicMessages.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jScrollPane3.setViewportView(publicMessages);
 
         jPanel3.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 290, 480));
 
@@ -140,6 +180,25 @@ public class ClientMessenger extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+       
+        
+        String message = this.messageSend.getText().trim();
+         String pos = this.users.getSelectedValue();
+         respServer = this.mainServer.writeReadText("SEND "+pos+" "+message);
+         
+         System.out.println(""+respServer);
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        String message = this.messageSend.getText().trim();
+        
+        respServer = this.mainServer.writeReadText("SENDALL "+message);
+         System.out.println(""+respServer);
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -179,7 +238,6 @@ public class ClientMessenger extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -187,7 +245,6 @@ public class ClientMessenger extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -196,7 +253,10 @@ public class ClientMessenger extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextPane jTextPane1;
-    private javax.swing.JTextPane jTextPane2;
+    private javax.swing.JEditorPane messageSend;
+    public javax.swing.JLabel numberUser;
+    public javax.swing.JTextPane privateMessages;
+    public javax.swing.JTextPane publicMessages;
+    public javax.swing.JList<String> users;
     // End of variables declaration//GEN-END:variables
 }
