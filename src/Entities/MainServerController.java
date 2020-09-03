@@ -52,12 +52,17 @@ public class MainServerController implements Runnable {
         while (true) {
             resp = this.controllerServer.readText();
 
-          //  System.out.println("" + resp); // Leer secuencialmente en la 
-
             if (resp.startsWith("4010")) { // Mensaje  privados a recibir
 
-                String message = resp.substring(5).trim();
-                this.privateMessages.replaceSelection(message + "\n");
+                String mystring = resp.substring(5).trim();
+                String arr[] = mystring.split(" ", 2);
+
+                String name = arr[0].toUpperCase();   //name
+                String theRest = arr[1];     //message
+
+                this.privateMessages.replaceSelection(theRest + "\n");
+                this.privateMessages.replaceSelection(name + ": \n");
+
 
             } else if (resp.startsWith("5000")) { //Listado de nombre actualizado
 
@@ -73,12 +78,18 @@ public class MainServerController implements Runnable {
 
                 }
                 userNames.setModel(model);
-                this.numUsers.setText("" + ((listNameUsers.length)-1));
+                this.numUsers.setText("" + ((listNameUsers.length) - 1));
 
             } else if (resp.startsWith("2010")) { // Mensajes publicos a recibir
 
-                String message = resp.substring(5).trim();
-                this.publicMessages.replaceSelection(message + "\n");
+                String mystring = resp.substring(5).trim();
+                String arr[] = mystring.split(" ", 2);
+
+                String name = arr[0].toUpperCase();   //name
+                String theRest = arr[1];     //message
+
+                this.publicMessages.replaceSelection(theRest + "\n");
+                this.publicMessages.replaceSelection(name + ": \n");
             }
 
         }
@@ -100,6 +111,5 @@ public class MainServerController implements Runnable {
     public void write(String command) {
         this.controllerServer.writeText(command);
     }
-    
-   
+
 }

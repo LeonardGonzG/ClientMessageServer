@@ -43,7 +43,7 @@ public class ClientMessenger extends javax.swing.JFrame {
         this.mainServer.write("GETUSERNAMES");
 
         this.myName.setText(this.nameUserClient);
-      //  System.out.println("" + respServer);
+        //  System.out.println("" + respServer);
 
     }
 
@@ -209,7 +209,7 @@ public class ClientMessenger extends javax.swing.JFrame {
 
             this.mainServer.write("SEND " + pos + " " + message);
             try {
-                Thread.sleep(500);
+                Thread.sleep(300);
             } catch (InterruptedException ex) {
                 System.out.println("Error en al espera de tiempo");
             }
@@ -217,7 +217,6 @@ public class ClientMessenger extends javax.swing.JFrame {
                 this.showMessageOk("Message sent successfully to " + pos);
             }
         } else if (pos == null) {
-
             this.showMessageError("SELECT USER", "Please select a user");
         } else if (message.isEmpty()) {
             this.showMessageError("MESSAGE EMPTY", "Please type a message");
@@ -235,11 +234,14 @@ public class ClientMessenger extends javax.swing.JFrame {
             if (mainServer.resp.startsWith("2000")) {
 
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(300);
                 } catch (InterruptedException ex) {
                     System.out.println("Error en al espera de tiempo");
                 }
                 this.showMessageOk("Message sent successfully to all");
+            }else{
+                showMessageError("MESSAGE NOT SEND", "The message cannot be sent, \n there are no users online");
+            
             }
         } else {
             this.showMessageError("MESSAGE EMPTY", "Please type a message");

@@ -1,6 +1,5 @@
 package GUI;
 
-import Entities.MainServerController;
 import javax.swing.JOptionPane;
 
 /**
@@ -11,7 +10,6 @@ public class Host extends javax.swing.JFrame {
 
     String hostnameLogin = "";
     int portLogin = -1;
-
 
     ClientMessenger user = new ClientMessenger();
 
@@ -50,7 +48,7 @@ public class Host extends javax.swing.JFrame {
         jLabel1.setText("Welcome to Messenger");
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
-        hostname.setText("LEONARDOGonz");
+        hostname.setText("LEONARDOG");
         jPanel1.add(hostname, new org.netbeans.lib.awtextra.AbsoluteConstraints(128, 82, 135, -1));
 
         jLabel2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
@@ -96,28 +94,31 @@ public class Host extends javax.swing.JFrame {
 
             this.portLogin = Integer.parseInt(this.port.getText().trim());
 
-            this.user.setTitle("MESSENGER CLIENT - Connected");
-            this.user.conectionServer(this.hostnameLogin,this.portLogin );
-            
-            
-             String beginMessegen=this.user.respServer;
-            
-            if (beginMessegen.startsWith("1000")) { // Registrado
-                this.user.loadComponents();
-                this.setVisible(false);
-                this.user.setVisible(true);
-                this.user.users.clearSelection();
-              
-            }else if(beginMessegen.startsWith("1002")){ //nombre ya se encuentra registrado
+            try {
 
-                this.showMessageError("USENAME ALREADY EXIST", "Please, enter other name");
-            }else if(beginMessegen.startsWith("1001")){ //nombre ya se encuentra registrado
+                this.user.setTitle("MESSENGER CLIENT - Connected");
 
-                this.showMessageError("INVALID NAME", "Please, enter other name");
-            }else{
-            
-                this.showMessageError("FAIL CONECTION", "Not is posible the conection with port: "+this.portLogin);
+                this.user.conectionServer(this.hostnameLogin, this.portLogin);
+
+                String beginMessegen = this.user.respServer;
+
+                if (beginMessegen.startsWith("1000")) { // Registrado
+                    this.user.loadComponents();
+                    this.setVisible(false);
+                    this.user.setVisible(true);
+                    this.user.users.clearSelection();
+
+                } else if (beginMessegen.startsWith("1002")) { //nombre ya se encuentra registrado
+                    this.showMessageError("USENAME ALREADY EXIST", "Please, enter other name");
+                } else if (beginMessegen.startsWith("1001")) { //nombre ya se encuentra registrado
+
+                    this.showMessageError("INVALID NAME", "Please, enter other name");
+                }
+
+            } catch (Exception e) {
+                this.showMessageError("FAIL CONECTION", "Not is posible the conection with port: " + this.portLogin);
             }
+          
 
         } else {
             this.showMessageError("Input parameters", "Please, enter hostname and port");
